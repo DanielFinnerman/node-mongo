@@ -9,6 +9,11 @@ app.use(express.urlencoded({extended: false})); // for parsing html form x-www-f
 // and/or app.use(express.json()); // for parsing application/json
 app.use('/cat', require('./route'));
 
+app.get('/', (req, res) => {
+	console.log('get /');
+	res.send('Hello from demo node+mongo, try /cat route');
+});
+
 
 db.on('connected', () => {
   app.listen(3000);
