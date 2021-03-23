@@ -11,7 +11,7 @@ router.route('/')
     res.send(`cat post ${post.name} created with id: ${post._id}`);
   })
   .get(async (req, res) => {
-    res.send(await cat.find().where('age').gt(11));
+    res.send(await cat.find().where('age').gt(1));
   });
 
 router.route('/:id')
