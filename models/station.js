@@ -2,55 +2,35 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const connectionsSchema = new Schema({
-  ConnectionTypeID: mongoose.ObjectId,
-  LevelID: mongoose.ObjectId,
-  CurrentTypeID: mongoose.ObjectId,
-  Quantity: Number
-});
-
-const connectiontypesSchema = new Schema({
-  FormalName: String,
-  Title: String
+const stationSchema = new Schema({
+  title: String,
+  town: String,
+  addressline1: String,
+  stateorprovince: String,
+  postcode: Number,
+  location: {
+    type: String,
+    coordinates: [{
+      0: String,
+      1: String,
+    }]
+  },
+  connections: [{
+    quantity: Number,
+    connectiontype: {
+      formalname: String,
+      title: String
+    },
+    currenttype: {
+      description: String,
+      title: String
+    },
+    leveltype: {
+      title: String,
+      comments: String,
+      isfastchargecapable: Boolean
+    }
+  }]
 })
 
-const currenttypesSchema = new Schema({
-  Description: String,
-  Title: String
-})
-
-const levelsSchema = new Schema({
-  Comments: String,
-  IsFastChargeCapable: Boolean,
-  Title: String
-})
-
-const stationsSchema = new Schema({
-  Location: new Schema({
-    coordinates: [Number],
-    type: String
-  }),
-  Connections: [{type: Schema.ObjectId, ref: 'connections'}],
-  Title: String,
-  AddressLine1: String,
-  Town: String,
-  StateOrProvince: String,
-  Postcode: String
-})
-
-const usersSchema = new Schema({
-  username: String,
-  password: String,
-  full_name: String
-})
-
-const models = {
-  connections: mongoose.model('connections', connectionsSchema),
-  connectiontypes: mongoose.model('connectiontypes', connectiontypesSchema),
-  currenttypes: mongoose.model('currenttypes', currenttypesSchema),
-  levels: mongoose.model('levels', levelsSchema),
-  stations: mongoose.model('stations', stationsSchema),
-  users: mongoose.model('users', usersSchema)
-}
-
-module.exports = models;
+module.exports = mongoose.model('Station', stationSchema);
