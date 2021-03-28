@@ -10,7 +10,7 @@ app.use(express.urlencoded({extended: false}));
 
 app.get('/', (req, res) => {
 	console.log('get /');
-	res.send('Hello from demo node+mongo, try /station route');
+	res.send('Hello from demo node+mongo, try /stations route');
 });
 
 app.use(routes);
