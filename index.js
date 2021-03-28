@@ -4,17 +4,12 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const db = require('./db');
+const routes = require('./route')
 
-app.use(express.urlencoded({extended: false})); // for parsing html form x-www-form-urlencoded
-// and/or app.use(express.json()); // for parsing application/json
-app.use('/cat', require('./route'));
+app.use(express.urlencoded({extended: false}));
 
-app.get('/', (req, res) => {
-	console.log('get /');
-	res.send('Hello from demo node+mongo, try /cat route');
-});
-
+app.use(routes);
 
 db.on('connected', () => {
-  app.listen(3000);
+	app.listen(3000);
 });
