@@ -22,6 +22,7 @@
     "url": "https://github.com/DanielFinnerman/node-mongo/issues"
   },
   "homepage": "https://github.com/DanielFinnerman/node-mongo#readme",
+  "type": "module",
   "dependencies": {
     "apollo-server-express": "^2.22.2",
     "dotenv": "^8.2.0",
