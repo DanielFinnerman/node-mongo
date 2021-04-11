@@ -1,56 +1,16 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const Schema = mongoose.Schema;
 
-const connectionsSchema = new Schema({
-  ConnectionTypeID: mongoose.ObjectId,
-  LevelID: mongoose.ObjectId,
-  CurrentTypeID: mongoose.ObjectId,
-  Quantity: Number
-});
+(async () => {
+  dotenv.config()
 
-const connectiontypesSchema = new Schema({
-  FormalName: String,
-  Title: String
-})
+  try {
+    await mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
+    console.log('DB connected successfully');
+  } catch (err) {
+    console.error('Connection to db failed', err);
+  }
+})();
 
-const currenttypesSchema = new Schema({
-  Description: String,
-  Title: String
-})
-
-const levelsSchema = new Schema({
-  Comments: String,
-  IsFastChargeCapable: Boolean,
-  Title: String
-})
-
-const stationsSchema = new Schema({
-  Location: new Schema({
-    coordinates: [Number],
-    type: String
-  }),
-  Connections: [{type: Schema.ObjectId, ref: 'connections'}],
-  Title: String,
-  AddressLine1: String,
-  Town: String,
-  StateOrProvince: String,
-  Postcode: String
-})
-
-const usersSchema = new Schema({
-  username: String,
-  password: String,
-  full_name: String
-})
-
-const models = {
-  connections: mongoose.model('connections', connectionsSchema),
-  connectiontypes: mongoose.model('connectiontypes', connectiontypesSchema),
-  currenttypes: mongoose.model('currenttypes', currenttypesSchema),
-  levels: mongoose.model('levels', levelsSchema),
-  stations: mongoose.model('stations', stationsSchema),
-  users: mongoose.model('users', usersSchema)
-}
-
-module.exports = models;
+export default mongoose.connection;
