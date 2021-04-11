@@ -2,10 +2,10 @@
   "name": "node-mongo",
   "version": "1.0.0",
   "description": "Test node.js with mongo database (mongoose)",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
