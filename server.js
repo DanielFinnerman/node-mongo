@@ -4,7 +4,6 @@ import {ApolloServer} from 'apollo-server-express';
 import express from 'express';
 import schemas from './schemas.js';
 import resolvers from './resolvers.js';
-import db from './db.js';
 
 (async () => {
     try {
