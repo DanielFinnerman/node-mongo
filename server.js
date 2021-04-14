@@ -1,7 +1,5 @@
 'use strict';
-
 import dotenv from 'dotenv';
-
 import pkg from 'apollo-server-express';
 const {ApolloServer} = pkg;
 import schemas from './schemas/index.js';
@@ -45,9 +43,6 @@ const checkAuth = (req, res) => {
                     session: false,
                 },
                 (err, user, info) => {
-                    // console.log('passport-err', err);
-                    // console.log('passport-user', user);
-                    // console.log('passport-info', info);
                     if (!user) {
                         resolve(false);
                     }
@@ -89,7 +84,6 @@ const checkAuth = (req, res) => {
             console.log('prduction');
             const {default: production} = await import('./sec/production.js');
             production(app, 3000);
-            // console.log('created production server');
         } else {
             console.log('localhost');
             const {default: localhost} = await import('./sec/localhost.js');
@@ -98,4 +92,4 @@ const checkAuth = (req, res) => {
     } catch (e) {
         throw e;
     }
-})();
+})()
