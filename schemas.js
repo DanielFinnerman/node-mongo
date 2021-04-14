@@ -2,6 +2,17 @@ import {gql} from 'apollo-server-express';
 
 
 const stationSchema = gql`
+  type User {
+    _id: ID!,
+    username: String!
+  }
+  type Login {
+    user: User!,
+    token: String!
+  }
+  extend type Query {
+    login(username: String!, password: String!): Login!
+  }
   input Bounds {
     lat: Float,
     lng: Float
@@ -111,6 +122,6 @@ const linkSchema = gql`
 `;
 
 export default [
-    linkSchema,
-    stationSchema,
+  linkSchema,
+  stationSchema,
 ];
