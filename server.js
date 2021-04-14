@@ -1,50 +1,78 @@
 'use strict';
 
-import {ApolloServer} from 'apollo-server-express';
+import dotenv from 'dotenv';
+
+import pkg from 'apollo-server-express';
+const {ApolloServer} = pkg;
+import schemas from './schemas/index.js';
+import resolvers from './resolvers/index.js';
 import express from 'express';
-import schemas from './schemas.js';
-import resolvers from './resolvers.js';
-import db from './db.js';
-import jwt from 'jsonwebtoken';
+import connectMongo from './db/db.js';
+import {chargemapRoute} from './routes/chargemapRoute.js';
+import {authRoute} from './routes/authRoute.js';
+import {chargemapSecretRoute} from './routes/chargemapSecretRoute.js';
+import {userRoute} from './routes/userRoute.js';
+import passport from './utils/pass.js';
+import helmet from 'helmet';
+dotenv.config();
+
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(
+    helmet({
+        ieNoOpen: false,
+        contentSecurityPolicy: false,
+    })
+);
+
+app.use('/chargemap', chargemapRoute);
+app.use(
+    '/chargemap',
+    passport.authenticate('jwt', {session: false}),
+    chargemapSecretRoute
+);
+app.use('/auth', authRoute);
+app.use('/user', userRoute);
 
 const checkAuth = (req, res) => {
-    return new Promise((resolve, reject) => {
-
-        /* TODO
-           first: Make login endpoint that gives token to client (in resolvers)
-           1. Look for a token in req object  DONE
-           2. Validate that token is valid DONE
-           3. Figure out the user from token DONE
-           4. return the user DONE
-        */
-
-        // step 1
-        const token = req.headers.token;
-
-        if (!token) {
-            resolve(null);
-        }
-
-        try {
-            // step 2 and 3
-            const user = jwt.verify(token, "asd123");
-            // step 4
-            resolve(user)
-        } catch (e) {
-            resolve(null)
-        }
-    });
+    try {
+        return new Promise((resolve, reject) => {
+            passport.authenticate(
+                'jwt',
+                {
+                    session: false,
+                },
+                (err, user, info) => {
+                    // console.log('passport-err', err);
+                    // console.log('passport-user', user);
+                    // console.log('passport-info', info);
+                    if (!user) {
+                        resolve(false);
+                    }
+                    resolve(user);
+                }
+            )(req, res);
+        });
+    } catch (err) {
+        throw err;
+    }
 };
 
 (async () => {
     try {
+        const conn = await connectMongo();
+        if (conn) {
+            console.log('Connected successfully.');
+        }
         const server = new ApolloServer({
             typeDefs: schemas,
             resolvers,
             context: async ({req, res}) => {
                 if (req) {
                     const user = await checkAuth(req, res);
-                    // console.log('app', user);
+
                     return {
                         req,
                         res,
@@ -52,18 +80,22 @@ const checkAuth = (req, res) => {
                     };
                 }
             },
-
         });
 
-
-        const app = express();
         server.applyMiddleware({app});
 
-        app.listen({port: 3000}, () =>
-            console.log(
-                `🚀 Server ready at http://localhost:3000${server.graphqlPath}`),
-        );
+        process.env.DEPLOY_ENVI = process.env.DEPLOY_ENVI || 'development';
+        if (process.env.DEPLOY_ENVI === 'production') {
+            console.log('prduction');
+            const {default: production} = await import('./sec/production.js');
+            production(app, 3000);
+            // console.log('created production server');
+        } else {
+            console.log('localhost');
+            const {default: localhost} = await import('./sec/localhost.js');
+            localhost(app, 8000, 3000);
+        }
     } catch (e) {
-        console.log('server error: ' + e.message);
+        throw e;
     }
 })();
