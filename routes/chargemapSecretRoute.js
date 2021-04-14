@@ -3,8 +3,6 @@ import express from 'express';
 const router = express.Router();
 import Connection from '../models/connection.js';
 import Station from '../models/station.js';
-// const { Connection, Station } = require('../models/model');
-import rectangleBounds from '../utils/rectangleBound.js';
 
 router
     .route('/station')

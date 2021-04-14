@@ -20,18 +20,14 @@ router
                 JSON.parse(req.query.topRight),
                 JSON.parse(req.query.bottomLeft)
             );
-            // get all stations definded by geoJSON polygon
-
             res
                 .status(200)
                 .send(await Station.find().where('loc').within(bound).limit(limit));
         } else {
-            // get all stations with option to limit the number of results
 
             res.status(200).send(await Station.find().limit(limit));
         }
 
-        // .where('loc').within(geoJsonPoly)
     });
 
 router
@@ -59,7 +55,6 @@ router
             })
         );
     })
-    // modify station
 
     // delete station
     .delete(async (req, res) => {
